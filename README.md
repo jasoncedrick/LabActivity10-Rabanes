@@ -1,4 +1,4 @@
-# Barangay Bulletin – Purok Rabanes
+# Barangay Bulletin - Purok Rabanes
 
 Laravel 12 / SQLite / Blade / Tailwind CSS 4. Lab Activity 10.
 
@@ -8,7 +8,7 @@ Laravel 12 / SQLite / Blade / Tailwind CSS 4. Lab Activity 10.
 - Categories: Announcement, Health, Peace & Order, Ayuda, Education.
 - Custom category: Education.
 - Pinned post: Purok Rabanes Clean-up Drive.
-- Birthday post date: November 23, 2026. The lab asks for the birthday month/day in 2026; the actual birth year is 2004.
+- Birthday post date: November 23, 2026, using the month/day from the supplied project.
 - Only is_published controls visibility, as requested in the lab. The birthday post is intentionally visible even before November 23.
 
 ## Run on Windows (PowerShell in this project folder)
@@ -28,6 +28,10 @@ Keep that terminal running. In a second terminal in the same folder:
 php artisan serve
 ```
 Open http://127.0.0.1:8000/posts.
+This is a Laravel application: its entry point is `public/index.php`, not the workspace's blank `index.html`. For Apache/XAMPP, point a virtual host's document root to this project's `public` directory.
+
+For a built frontend without a running Vite development server, run `npm run build`, then `php artisan serve`. The local verification server used port 8010; use `php artisan serve --port=8010` to use that same address.
+
 On macOS/Linux use `cp .env.example .env` and `touch database/database.sqlite` instead of the PowerShell commands.
 Keep DB_CONNECTION=sqlite and DB_DATABASE commented out.
 `migrate:fresh` deletes existing database tables; use it for this lab database only.
@@ -56,7 +60,7 @@ $post->title = 'Purok Rabanes: ' . $post->title;
 $post->save();
 App\Models\Post::find(1)->title;
 ```
-The first three results should be 5, 51, and 10. Capture your actual Tinker session with Windows Snipping Tool and save it as `docs/tinker.png`. That screenshot is not included because the code has not run in PHP here.
+The first three results are 5, 51, and 10. [docs/tinker.png](docs/tinker.png) captures a live Tinker terminal session showing those counts, `find(1)`, a title change, `save()` returning true, and the title loaded again from SQLite. [docs/tinker.txt](docs/tinker.txt) contains the captured terminal text. Running the title-change command again adds another prefix; fresh seeding resets it.
 
 ## Files to understand for lab defense
 - migrations: up creates/changes tables; down reverses the change. Authors must exist before the posts foreign key.
@@ -69,13 +73,23 @@ The first three results should be 5, 51, and 10. Capture your actual Tinker sess
 
 ## Submission checklist
 - Run the commands above and inspect search, category filtering, page 2, post details, and draft 404s.
-- Save your real docs/tinker.png.
-- Create public GitHub repository `LabActivity10-Rabanes` and submit its URL on Moodle.
+- Review the included `docs/tinker.png` and repeat the Tinker steps for practice.
+- Repository: https://github.com/jasoncedrick/LabActivity10-Rabanes. Submit this URL on Moodle.
 - Do not commit .env, vendor/, node_modules/, or database.sqlite (gitignore covers them).
-- Make meaningful commits as you review and change the project; no fabricated commit history is supplied.
+- The commit history records the supplied project import, local setup, and verification evidence.
 - Review and adapt the code so you can explain it. Follow your class rules on acknowledging assistance.
 
 ## Validation status
-Includes feature tests for counts, personal post data, ordering, pagination, filters, empty results, view counting, and draft/missing-page protection. PHP/Composer execution was unavailable in the preparation environment. Run `php artisan test` locally; these tests have not yet been executed.
+Verified locally on November 9, 2026 with PHP 8.4, Laravel 12, SQLite, and Node.js 22.16. The Composer lock file resolves against PHP 8.2 for compatibility with the lab's minimum version.
 
-Frontend validation: npm install and npm run build completed successfully.
+- `php artisan test`: **5 passed, 23 assertions**.
+- Full migration rollback and re-migration passed; the separate views migration also rolled back and reapplied successfully.
+- `npm ci` and `npm run build`: passed.
+- `composer validate`: passed.
+- Browser checks: seven cards per page, pinned post first, title search, detail page, view increment, empty results, and a 390px mobile layout without horizontal overflow.
+
+See [docs/verification.md](docs/verification.md) for the evidence and [desktop preview](docs/bulletin-desktop.png).
+
+## Development notes
+
+Started from the supplied `LabActivity10-Rabanes.zip`. Codex assisted with local setup, dependency compatibility, formatting, verification, evidence capture, and documentation. The personalized details were retained from that archive.
