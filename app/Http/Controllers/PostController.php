@@ -1,7 +1,10 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\Post;
 use Illuminate\Http\Request;
+
 class PostController extends Controller
 {
     public function index(Request $request)
@@ -17,14 +20,17 @@ class PostController extends Controller
             ->paginate(7)
             ->withQueryString();
         $categories = Post::query()->distinct()->orderBy('category')->pluck('category');
+
         return view('posts.index', compact('posts', 'categories'));
     }
+
     public function show($id)
     {
         $post = Post::findOrFail($id);
         abort_unless($post->is_published, 404);
         $post->views += 1;
         $post->save();
+
         return view('posts.show', compact('post'));
     }
 }

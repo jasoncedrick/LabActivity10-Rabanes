@@ -1,17 +1,22 @@
 <?php
+
 namespace Tests\Feature;
+
 use App\Models\Author;
 use App\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+
 class BulletinTest extends TestCase
 {
     use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->withoutVite();
     }
+
     public function test_seed_counts_and_personal_post(): void
     {
         $this->seed();
@@ -25,6 +30,7 @@ class BulletinTest extends TestCase
             return $posts->perPage() === 7 && $posts->total() === 41 && $posts->first()->id === $pinned->id;
         });
     }
+
     public function test_filters_and_pagination_preserve_query(): void
     {
         $author = Author::factory()->create();
@@ -39,6 +45,7 @@ class BulletinTest extends TestCase
         $this->get('/posts?q=School&category=Education&page=2')->assertOk()->assertViewHas('posts', fn ($posts) => $posts->count() === 1);
         $this->get('/posts?q=does-not-exist')->assertOk()->assertSee('No posts match your search.')->assertSee('Showing 0–0 of 0 posts');
     }
+
     public function test_show_increments_views_but_drafts_and_missing_posts_are_hidden(): void
     {
         $post = Post::factory()->create(['views' => 2]);

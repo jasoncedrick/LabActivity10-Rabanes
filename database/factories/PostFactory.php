@@ -1,7 +1,10 @@
 <?php
+
 namespace Database\Factories;
+
 use App\Models\Author;
 use Illuminate\Database\Eloquent\Factories\Factory;
+
 class PostFactory extends Factory
 {
     public function definition(): array
@@ -17,6 +20,7 @@ class PostFactory extends Factory
             'views' => 0,
         ];
     }
+
     public function draft(): static
     {
         return $this->state(fn () => ['is_published' => false, 'published_at' => null]);
