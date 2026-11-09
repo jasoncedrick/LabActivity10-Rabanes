@@ -9,16 +9,27 @@ class PostController extends Controller
 {
     public function index(Request $request)
     {
-        $request->validate(['q' => ['nullable', 'string', 'max:255'], 'category' => ['nullable', 'string', 'max:100']]);
-        $posts = Post::query()
-            ->where('is_published', true)
-            ->when($request->filled('q'), fn ($query) => $query->where('title', 'like', '%'.$request->input('q').'%'))
-            ->when($request->filled('category'), fn ($query) => $query->where('category', $request->input('category')))
-            ->orderByDesc('is_pinned')
+        $request->validate([
+            'q' => ['nullable', 'string', 'max:255'],
+            'category' => ['nullable', 'string', 'max:100'],
+        ]);
+
+        $query = Post::where('is_published', true);
+
+        if ($request->filled('q')) {
+            $query->where('title', 'like', '%'.$request->input('q').'%');
+        }
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->input('category'));
+        }
+
+        $posts = $query->orderByDesc('is_pinned')
             ->latest('published_at')
             ->orderByDesc('id')
             ->paginate(7)
             ->withQueryString();
+
         $categories = Post::query()->distinct()->orderBy('category')->pluck('category');
 
         return view('posts.index', compact('posts', 'categories'));
@@ -27,7 +38,11 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::findOrFail($id);
-        abort_unless($post->is_published, 404);
+
+        if (! $post->is_published) {
+            abort(404);
+        }
+
         $post->views += 1;
         $post->save();
 

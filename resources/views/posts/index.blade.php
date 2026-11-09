@@ -13,8 +13,8 @@
         <label for="category" class="mb-1 block text-sm font-medium">Category</label>
         <select id="category" name="category" class="w-full rounded-lg border border-stone-300 px-3 py-2">
             <option value="">All categories</option>
-            @foreach ($categories as $c)
-                <option value="{{ $c }}" @selected(request('category') === $c)>{{ $c }}</option>
+            @foreach ($categories as $category)
+                <option value="{{ $category }}" @selected(request('category') === $category)>{{ $category }}</option>
             @endforeach
         </select>
     </div>
